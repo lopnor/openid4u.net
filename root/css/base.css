@@ -1,0 +1,63 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+    color: #999;
+}
+a { text-decoration: none;
+    color: #666;
+    border-bottom: 2px solid #666;
+}
+h1 a {
+    display: block;
+    background: url(/images/openid4u.png) no-repeat;
+    background-position: left top;
+    width: 405px;
+    height: 100px;
+    text-indent: -9999px;
+    text-decoration: none;
+    margin: 50px auto 40px auto;
+    border-bottom: none;
+    text-align: center;
+}
+
+#content {
+    border: 3px solid #ccc;
+    width: 485px;
+    height: 300px;
+    margin: 10px auto;
+    text-align: center;
+}
+div.prompt {
+    text-align: center;
+    margin: 5px 0px;
+    line-height: 1.5em;
+}
+form {
+    margin: 10px auto;
+    text-align: center;
+}
+dl {
+    padding: 10px;
+    line-height: 2em;
+    text-align: center;
+}
+dd {
+    font-weight: bold;
+    margin: 0px;
+} 
+ul {
+    list-style-type: none;
+    text-align: center;
+    padding: 0px;
+}
+
+address {
+    display: block;
+    margin: 10px auto;
+    clear: left;
+    text-align: center;
+}
+address a{
+    border-bottom: none;
+    color: #999;
+}
