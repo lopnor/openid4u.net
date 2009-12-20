@@ -23,7 +23,7 @@ h1 a {
 #content {
     border: 3px solid #ccc;
     width: 485px;
-    height: 350px;
+    height: 380px;
     margin: 10px auto;
     text-align: center;
 }
@@ -44,6 +44,7 @@ dl {
 dd {
     font-weight: bold;
     margin: 0px;
+    word-break: break-all;
 } 
 ul {
     list-style-type: none;
