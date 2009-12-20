@@ -3,7 +3,7 @@
 ? block head => sub {
         <link rel="openid.server" href="<?= $c->uri_for('/server') ?>" />
         <link rel="openid2.provider" href="<?= $c->uri_for('/server') ?>" />
-        <meta http-equiv="x-xrds-location" content="<?= $c->uri_for('/signon_xrds', $s->{service} , $s->{username} ) ?>" />
+        <meta http-equiv="X-XRDS-Location" content="<?= $c->uri_for('/signon_xrds' ) ?>" />
 
 ? };
 

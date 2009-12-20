@@ -90,7 +90,10 @@ sub _instance {
             $url eq $user->identity ? 1 : 0 : 
             0;
         },
-        is_trusted => sub {0},
+        is_trusted => sub {
+            my ($user, $url, $is_identity) = @_;
+            $is_identity;
+        },
         server_secret => $self->server_secret,
         setup_url => $self->setup_url,
         endpoint_url => $self->endpoint_url,

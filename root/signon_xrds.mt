@@ -7,7 +7,6 @@
         <Service priority="0">
             <Type>http://specs.openid.net/auth/2.0/signon</Type>
             <URI><?= $c->uri_for('/server') ?></URI>
-            <LocalID><?= $s->{user}->identity ?></LocalID>
         </Service>
     </XRD>
 </xrds:XRDS>

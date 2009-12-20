@@ -1,5 +1,5 @@
 blib
 META.yml
 Makefile
-config.yaml
+config.yaml*
 inc

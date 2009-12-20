@@ -1,6 +1,7 @@
 ? extends 'base';
 
 ? block head => sub {
+        <meta http-equiv="X-XRDS-Location" content="<?= $c->uri_for('/server_xrds') ?>">
         <style type="text/css">
         a.login {
             display: block;

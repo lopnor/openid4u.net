@@ -50,16 +50,9 @@ sub server_xrds :Local :Args(0) {
     $c->res->content_type('application/xrds+xml');
 }
 
-sub signon_xrds :Local :Args(2) {
-    my ($self, $c, $service, $username) = @_;
-    my $model = $c->model('Auth');
-    my $u = $model->get_user($service, $username) or $c->detach('default');
+sub signon_xrds :Local :Args(0) {
+    my ($self, $c) = @_;
     $c->res->content_type('application/xrds+xml');
-    $c->stash(
-        {
-            user => $u,
-        }
-    );
 }
 
 sub server :Local :Args(0) {
@@ -69,6 +62,15 @@ sub server :Local :Args(0) {
     my $q = $c->req->params;
     my ($type, $data) = $model->handle_request($q, $user);
     if ($type eq 'redirect') {
+        unless ($user) {
+            $c->session->set(next_uri => $c->req->uri);
+            return $c->redirect($c->uri_for('/login', $model->find_service($q)));
+        }
+        if ({ URI->new($data)->query_form() }->{'openid.mode'} eq 'id_res') {
+            $c->session->set(next_uri => $data);
+            $c->session->set(query => $q);
+            return $c->res->redirect($c->uri_for('setup'));
+        }
         return $c->res->redirect($data);
     } elsif ( $type eq 'setup' ) {
         unless ($user) {
@@ -99,13 +101,15 @@ sub setup :Local :Args(0) {
         return;
     }
     if ($c->req->method eq 'POST') {
-        return $c->redirect(
-            $model->return_url(
-                sign => $c->req->param('yes') ? 1 : 0,
-                query => $c->session->remove('query'),
-                user => $c->session->remove('user'),
-            )
+        $c->session->remove('query');
+        $c->session->remove('user');
+        my $url =  $c->session->remove('next_uri') if $c->req->param('yes');
+        $url ||= $model->return_url(
+            sign => $c->req->param('yes') ? 1 : 0,
+            query => $q,
+            user => $user,
         );
+        return $c->redirect($url);
     }
     $c->stash(
         {
