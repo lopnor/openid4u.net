@@ -4,7 +4,7 @@ use YAML qw/LoadFile/;
 
 __PACKAGE__->config(
     class => 'OpenID4u::API::Auth',
-    args => LoadFile(OpenID4u->path_to('config.yaml')),
+    args => LoadFile(OpenID4u->path_to('config.yaml'))->{auth},
     deref => 1,
 );
 

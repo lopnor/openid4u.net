@@ -3,7 +3,7 @@
         <title>OpenID4U - A Web Authentication Proxy</title>
         <meta http-equiv="Content-Style-Type" content="text/css">
         <meta http-equiv="Content-Script-Type" content="text/javascript">
-        <meta http-equiv="x-xrds-location" content="http://openid4u.net/server.xrds">
+        <meta http-equiv="x-xrds-location" content="<?= $c->uri_for('/server_xrds') ?>">
         <link rel="stylesheet" href="/css/base.css" type="text/css" media="all">
         <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
         </script>

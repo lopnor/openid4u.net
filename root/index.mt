@@ -7,7 +7,7 @@
             float: left;
             text-indent: -9999px;
             padding: 5px;
-            margin: 10px 15px;
+            margin: 20px 15px;
             width: 200px;
             height: 50px;
             border: 1px solid #ccc;

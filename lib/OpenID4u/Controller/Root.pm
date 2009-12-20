@@ -1,5 +1,6 @@
 package OpenID4u::Controller::Root;
 use Ark 'Controller';
+use OpenID4u::API::User;
 
 has '+namespace' => default => '';
 
@@ -16,16 +17,19 @@ sub index :Path :Path('login') :Args(0) {}
 sub login :Path('login') :Args(1) {
     my ($self, $c, $service) = @_;
 
+    $OpenID4u::API::User::BASE_URI = $c->uri_for('/')->as_string;
+
     my $model = $c->model('Auth');
-    my $username = $model->login($service, $c->req->params);
-    unless ($username) {
+    my $user = $model->login($service, $c->req->params);
+    unless ($user) {
         my $url = $model->login_url(
             $service, 
             {callback_url => $c->uri_for("/login/$service/")}, # for jugem
         );
         return $c->redirect($url);
     }
-    $c->redirect($c->uri_for($service, $username));
+    $c->session->set(user => $user);
+    $c->redirect($c->session->remove('next_uri') || $user->identity);
 }
 
 sub profile :Regex('^(facebook|flickr|hatena|jugem|livedoor)/(.*)/?$') {
@@ -37,6 +41,78 @@ sub profile :Regex('^(facebook|flickr|hatena|jugem|livedoor)/(.*)/?$') {
             service => $service,
             username => $username,
             url => $url,
+        }
+    );
+}
+
+sub server_xrds :Local :Args(0) {
+    my ($self, $c) = @_;
+    $c->res->content_type('application/xrds+xml');
+}
+
+sub signon_xrds :Local :Args(2) {
+    my ($self, $c, $service, $username) = @_;
+    my $model = $c->model('Auth');
+    my $u = $model->get_user($service, $username) or $c->detach('default');
+    $c->res->content_type('application/xrds+xml');
+    $c->stash(
+        {
+            user => $u,
+        }
+    );
+}
+
+sub server :Local :Args(0) {
+    my ($self, $c) = @_;
+    my $user = $c->session->get('user');
+    my $model = $c->model('OpenID');
+    my $q = $c->req->params;
+    my ($type, $data) = $model->handle_request($q, $user);
+    if ($type eq 'redirect') {
+        return $c->res->redirect($data);
+    } elsif ( $type eq 'setup' ) {
+        unless ($user) {
+            $c->session->set(next_uri => $c->req->uri);
+            return $c->redirect($c->uri_for('/login', $model->find_service($q)));
+        }
+        $c->session->set(query => $q);
+        $c->res->redirect($c->uri_for('setup'));
+    } else {
+        $c->res->content_type( $type );
+        $c->res->body( $data );
+    }
+}
+
+sub setup :Local :Args(0) {
+    my ($self, $c) = @_;
+    my $model = $c->model('OpenID');
+    my $user = $c->session->get('user');
+    my $q = $c->session->get('query');
+    unless ($user) {
+        $c->session->set(next_uri => $c->req->uri);
+        return $c->redirect($c->uri_for('/login', $model->find_service($q)));
+    }
+    unless ($model->is_identity($q, $user)) {
+        $c->session->remove('user');
+        $c->res->code(403);
+        $c->res->body('different user!');
+        return;
+    }
+    if ($c->req->method eq 'POST') {
+        return $c->redirect(
+            $model->return_url(
+                sign => $c->req->param('yes') ? 1 : 0,
+                query => $c->session->remove('query'),
+                user => $c->session->remove('user'),
+            )
+        );
+    }
+    $c->stash(
+        {
+            trust_root => $q->{'openid.trust_root'} || $q->{'openid.realm'},
+            identity => $user->identity,
+            claimed_id => $q->{'openid.claimed_id'},
+            return_to => $q->{'openid.return_to'},
         }
     );
 }

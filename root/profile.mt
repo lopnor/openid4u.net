@@ -1,15 +1,18 @@
 ? extends 'base';
 
 ? block head => sub {
-        <meta http-equiv="X-XRDS-Location" content="http://openid4u.net/signon.xrds" />
+        <link rel="openid.server" href="<?= $c->uri_for('/server') ?>" />
+        <link rel="openid2.provider" href="<?= $c->uri_for('/server') ?>" />
+        <meta http-equiv="x-xrds-location" content="<?= $c->uri_for('/signon_xrds', $s->{service} , $s->{username} ) ?>" />
+
 ? };
 
 ? block body => sub {
             <div class="prompt">
-                This is openid identity page for <?= $stash->{username} ?> from <?= $stash->{service} ?>.<br />
+                This is openid identity page for <?= $s->{username} ?> from <?= $s->{service} ?>.<br />
                 More informations may be found at the url below.
             </div>
             <ul>
-                <li><a href="<?= $stash->{url} ?>"><?= $stash->{url} ?></a>
+                <li><a href="<?= $s->{url} ?>"><?= $s->{url} ?></a>
             </ul>
 ? };

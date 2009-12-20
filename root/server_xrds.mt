@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?= raw_string qq(<\?xml version="1.0" encoding="UTF-8"?\>) ?>
 <xrds:XRDS
         xmlns:xrds="xri://$xrds"
         xmlns:openid="http://openid.net/xmlns/1.0"
@@ -6,7 +6,7 @@
     <XRD>
         <Service priority="0">
             <Type>http://specs.openid.net/auth/2.0/server</Type>
-            <URI>http://openid4u.net/server.cgi</URI>
+            <URI><?= $c->uri_for('/server') ?></URI>
         </Service>
     </XRD>
 </xrds:XRDS>
