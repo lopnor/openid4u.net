@@ -69,16 +69,16 @@ sub server :Local :Args(0) {
         if ({ URI->new($data)->query_form() }->{'openid.mode'} eq 'id_res') {
             $c->session->set(next_uri => $data);
             $c->session->set(query => $q);
-            return $c->res->redirect($c->uri_for('setup'));
+            return $c->redirect($c->uri_for('setup'));
         }
-        return $c->res->redirect($data);
+        return $c->redirect($data);
     } elsif ( $type eq 'setup' ) {
         unless ($user) {
             $c->session->set(next_uri => $c->req->uri);
             return $c->redirect($c->uri_for('/login', $model->find_service($q)));
         }
         $c->session->set(query => $q);
-        $c->res->redirect($c->uri_for('setup'));
+        $c->redirect($c->uri_for('setup'));
     } else {
         $c->res->content_type( $type );
         $c->res->body( $data );
