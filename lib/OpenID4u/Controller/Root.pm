@@ -20,7 +20,7 @@ sub login :Path('login') :Args(1) {
     $OpenID4u::API::User::BASE_URI = $c->uri_for('/')->as_string;
 
     my $model = $c->model('Auth');
-    my $user = $model->login($service, $c->req->params);
+    my $user = $model->login($service, $c->req->parameters->mixed);
     unless ($user) {
         my $url = $model->login_url(
             $service, 
@@ -59,7 +59,7 @@ sub server :Local :Args(0) {
     my ($self, $c) = @_;
     my $user = $c->session->get('user');
     my $model = $c->model('OpenID');
-    my $q = $c->req->params;
+    my $q = $c->req->parameters->mixed;
     my ($type, $data) = $model->handle_request($q, $user);
     if ($type eq 'redirect') {
         unless ($user) {
